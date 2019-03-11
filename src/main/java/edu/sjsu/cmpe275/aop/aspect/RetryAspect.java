@@ -13,7 +13,7 @@ public class RetryAspect {
      * You are expected to provide an actual implementation based on the requirements, including adding/removing advices as needed.
      */
 
-	@Around("execution(public void edu.sjsu.cmpe275.aop.SecretService.*(..))")
+	@Around("execution(public void edu.sjsu.cmpe275.aop.SecretService.createSecret(..))")
 	public void dummyAdvice(ProceedingJoinPoint joinPoint) {
 		System.out.printf("Retry aspect prior to the executuion of the metohd %s\n", joinPoint.getSignature().getName());
 		Object result = null;
@@ -24,6 +24,9 @@ public class RetryAspect {
 			e.printStackTrace();
 			System.out.printf("Aborted the executuion of the metohd %s\n", joinPoint.getSignature().getName());
 		}
+		
+		
+		
 	}
 
 }

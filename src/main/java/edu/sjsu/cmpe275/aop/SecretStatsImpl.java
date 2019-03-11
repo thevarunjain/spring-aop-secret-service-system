@@ -36,6 +36,8 @@ public class SecretStatsImpl implements SecretStats {
 //	@Override
 	public void resetStatsAndSystem() {
 		// TODO Auto-generated method stub
+		System.out.println(trustedUser);
+		System.out.println(worstKeeper);
 		longestSecretLength = 0;
 		accessController.clear();
 		readCountSecret.clear();
@@ -71,11 +73,9 @@ public class SecretStatsImpl implements SecretStats {
 	public String getWorstSecretKeeper() {
 		int minShared = Integer.MAX_VALUE;
 		String userId =null;
-		System.err.println(worstKeeper);
 		for(Map.Entry<String, HashSet> entry : worstKeeper.entrySet()) {
 				int countOut  = entry.getValue().size();
 				int countIn = 0;
-				System.err.println(entry.getKey());
 				if(trustedUser.containsKey(entry.getKey())) {
 					countIn = trustedUser.get(entry.getKey()).size();
 				}
@@ -103,6 +103,15 @@ public class SecretStatsImpl implements SecretStats {
 				if(entry.getValue().size()>maxReads){
 					maxReads = entry.getValue().size();
 					secret = entry.getKey();
+				}else if(entry.getValue().size()==maxReads){
+					if(allSecrets.get(secret).compareToIgnoreCase(allSecrets.get(entry.getKey())) < 0 ) {
+//						maxReads = allSecrets.get(secret).length();
+//						secret = secret;
+					}else if(allSecrets.get(secret).compareToIgnoreCase(allSecrets.get(entry.getKey())) > 0 ){
+//						maxReads = allSecrets.get(entry.getKey()).length();
+						secret = entry.getKey();
+					}
+						
 				}
 		}
 
@@ -167,7 +176,8 @@ public class SecretStatsImpl implements SecretStats {
 	}
 	
 	public void sharingSecret(String userId, UUID secretId, String targetId) {
-		if(accessController.get(secretId).indexOf(targetId)==-1) {
+//		if(accessController.get(secretId).indexOf(targetId)==-1) {
+		//Adding targetId to access controller
 			accessController.get(secretId).add(targetId);
 			System.out.println("Secret has been shared with "+targetId);
 	
@@ -201,9 +211,9 @@ public class SecretStatsImpl implements SecretStats {
 				}
 				
 			
-		}else {
-			System.err.println("Secret is already shared with "+targetId);
-		}
+//		}else {
+//			System.err.println("Secret is already shared with "+targetId);
+//		}
 		System.out.println(accessController);
 	}
 
@@ -231,8 +241,6 @@ public class SecretStatsImpl implements SecretStats {
 		}else {
 			System.err.println("Creater has tried to delete itself, handled silently");
 		}
-		System.out.println(accessController);
-		System.out.println("read"+readCountSecret);
 	}
 
 	
