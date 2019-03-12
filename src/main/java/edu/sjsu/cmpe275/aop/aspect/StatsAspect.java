@@ -44,7 +44,10 @@ public class StatsAspect {
 			System.out.println("**Secret Creation**");
 			Object [] args = joinPoint.getArgs();
 			String tempOwner = args[0].toString();
-			String tempSecret= args[1].toString();
+			String tempSecret = null;
+			if(args[1]!=null) {
+				 tempSecret= args[1].toString();
+			}
 			stats.generateLength((String)args[1]);			// message 
 			stats.creatingSecret(retVal,tempOwner, tempSecret);
 		}	

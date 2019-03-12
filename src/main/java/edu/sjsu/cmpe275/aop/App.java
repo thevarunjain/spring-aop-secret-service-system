@@ -61,41 +61,13 @@ public class App {
 //        	secretService.readSecret("Bob", secret);
 //        	secretService.readSecret("Carl", secret);
 //        	secretService.readSecret("Carl", secret);
-        	
-//
-             UUID secret = secretService.createSecret(USER_1, USER_1_SECRET);
-             secretService.shareSecret(USER_1, secret, USER_2);
-             secretService.shareSecret(USER_1, secret, USER_4);
+            UUID s1 = secretService.createSecret("Alice", null);
+            UUID s2 = secretService.createSecret("Bob", "World");
+            secretService.shareSecret("Alice", s1, "Bob");
+            secretService.shareSecret("Bob", s2, "Alice");
+            secretService.readSecret("Alice", s2);
+            secretService.readSecret("Bob", s1);
 
-             secret = secretService.createSecret(USER_2, USER_2_SECRET);
-             secretService.shareSecret(USER_2, secret, USER_1);
-             secretService.shareSecret(USER_2, secret, USER_3);
-             secretService.shareSecret(USER_2, secret, USER_4);
-
-             secret = secretService.createSecret(USER_3, USER_3_SECRET);
-             secretService.shareSecret(USER_3, secret, USER_4);
-
-             secret = secretService.createSecret(USER_4, USER_4_SECRET);
-             secretService.shareSecret(USER_4, secret, USER_1);
-             secretService.shareSecret(USER_4, secret, USER_2);
-
-             
-//             secretService.shareSecret(USER_2, secret, null);
-//        	UUID secret = secretService.createSecret(USER_1, USER_1_SECRET);
-//            secretService.shareSecret(USER_1, secret, USER_2);
-//            secretService.shareSecret("random", secret, USER_3);
-//            secretService.shareSecret(USER_2, secret, USER_3);
-        	
-//           
-//        	UUID secret = secretService.createSecret("Alice", "secretContent");
-//        	secretService.shareSecret("Alice", secret, "Bob");
-//            UUID secret = secretService.createSecret(USER_1, USER_1_SECRET);
-//            secretService.shareSecret(USER_1, secret, USER_2);
-//            secretService.shareSecret(USER_1, secret, USER_3);
-//            secretService.readSecret(USER_2, secret);
-//            secretService.readSecret(USER_3, secret);
-            
-            
             
      
         	

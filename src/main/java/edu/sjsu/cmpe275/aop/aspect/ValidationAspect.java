@@ -12,7 +12,7 @@ import org.springframework.aop.ThrowsAdvice;
 import org.springframework.core.annotation.Order;
 
 @Aspect
-@Order(1)
+@Order(0)
 public class ValidationAspect {
     /***
      * Following is a dummy implementation of this aspect.
@@ -24,22 +24,19 @@ public class ValidationAspect {
 		System.out.printf("Validation for %s\n", joinPoint.getSignature().getName());
 		Object[] args = joinPoint.getArgs();	
 		
-		if(joinPoint.getSignature().getName() == "createSecret") {
+		if(joinPoint.getSignature().getName().equals("createSecret") ) {
 			Object name = args[0];
 			Object secret = args[1];			
 
-				if(name == null || name.toString().length()<=0) {
+				if(name == null) {
 					throw new IllegalArgumentException("Name not found");
 				}
-			if(secret.toString().length()==0) {
-				throw new IllegalArgumentException("Secret not found");
-			}else if(secret.toString().length()>100){
-				throw new IllegalArgumentException("Secret too long");
+				if(secret!= null && secret.toString().length()>100){
+				throw new IllegalArgumentException("Secret is more than 100 characters");
 			}
 		}else{
 			for(Object w : args) {
-			System.err.println("object >>>"+w);
-				if(w == null || w.toString().length() == 0) {
+				if(w == null) {
 					throw new IllegalArgumentException("One or more argument not passed in "+joinPoint.getSignature().getName());
 				}
 			}

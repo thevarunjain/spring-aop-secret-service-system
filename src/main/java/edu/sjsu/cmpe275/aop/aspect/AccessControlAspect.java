@@ -32,7 +32,6 @@ public class AccessControlAspect {
      */
     	@Autowired SecretStatsImpl stats;
 	
-		
 		@Before("execution(public void edu.sjsu.cmpe275.aop.SecretService.shareSecret(..))")
 		public void checkAuthorizedUserBeforeSharing  (JoinPoint joinPoint) {
 			System.out.printf("Access control for -> %s\n", joinPoint.getSignature().getName());

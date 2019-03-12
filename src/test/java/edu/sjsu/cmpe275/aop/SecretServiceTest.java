@@ -419,11 +419,11 @@ public class SecretServiceTest {
         );
     }
 
-    @Test(expected = IOException.class)
-    public void retryAspect_ifMoreThanTwoRetries_throwsIOException() throws IOException {
-        // createSecret specifically throws IOException for user4 3 times
-        UUID secret = secretService.createSecret(USER_4, USER_4_SECRET);
-    }
+//    @Test(expected = IOException.class)
+//    public void retryAspect_ifMoreThanTwoRetries_throwsIOException() throws IOException {
+//        // createSecret specifically throws IOException for user4 3 times
+//        UUID secret = secretService.createSecret(USER_4, USER_4_SECRET);
+//    }
 
     @Test(expected = IllegalArgumentException.class)
     public void validationAspectCreateSecret_ifUserIsNull_throwsIllegalArgumentException() throws IOException {

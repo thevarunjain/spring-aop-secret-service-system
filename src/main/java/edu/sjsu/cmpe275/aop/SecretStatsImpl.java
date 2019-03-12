@@ -103,16 +103,11 @@ public class SecretStatsImpl implements SecretStats {
 		int maxReads = -1;
 		UUID secret = null;
 		for(Map.Entry<UUID, ArrayList> entry : readCountSecret.entrySet()) {
-			System.out.println("..");
 				if(entry.getValue().size()>maxReads){
 					maxReads = entry.getValue().size();
 					secret = entry.getKey();
-				}else if(entry.getValue().size()==maxReads){
-					if(allSecrets.get(secret).compareToIgnoreCase(allSecrets.get(entry.getKey())) < 0 ) {
-//						maxReads = allSecrets.get(secret).length();
-//						secret = secret;
-					}else if(allSecrets.get(secret).compareToIgnoreCase(allSecrets.get(entry.getKey())) > 0 ){
-//						maxReads = allSecrets.get(entry.getKey()).length();
+				}else if(entry.getValue().size()==maxReads && allSecrets.get(entry.getKey())!=null){				// when tie and is not tied with null key
+						if(allSecrets.get(secret).compareToIgnoreCase(allSecrets.get(entry.getKey())) > 0 ){
 						secret = entry.getKey();
 					}
 						
@@ -127,7 +122,12 @@ public class SecretStatsImpl implements SecretStats {
 
 	public void generateLength(String message) {
 		// TODO Auto-generated method stub
-		if(message.length()>longestSecretLength) {
+		if(message == null) {
+			int nullLength = 0;
+			if(longestSecretLength>nullLength) {
+				longestSecretLength = nullLength;
+			}
+		}else if(message.length()>longestSecretLength) {
 			longestSecretLength=message.length();
 		}
 	}
@@ -228,7 +228,6 @@ public class SecretStatsImpl implements SecretStats {
 
 	public void readingSecret(String userId, UUID secretId) {
 		// TODO Auto-generated method stub
-		System.out.println("sssssssssssssssssssssssssssssssssssss"+ userId+ secretId);
 		if(readCountSecret.get(secretId)!=null){
 			if(readCountSecret.get(secretId).indexOf(userId)==-1) {
 				readCountSecret.get(secretId).add(userId);	
