@@ -22,6 +22,12 @@ public class SecretServiceImpl implements SecretService {
 //	@Override
 	public UUID createSecret(String userId, String secretContent) throws IOException, IllegalArgumentException {
 		System.out.printf("User %s creates secret: %s\n", userId, secretContent);
+//		int count = 3;
+//		if(userId=="user4") {
+//			for(int i=0;i<count;i++) {
+//				throw new IOException();
+//			}
+//		}
 		Secret secret = new Secret(secretContent);
 		UUID id = secret.getId();
 		secrets.put(id, secret);

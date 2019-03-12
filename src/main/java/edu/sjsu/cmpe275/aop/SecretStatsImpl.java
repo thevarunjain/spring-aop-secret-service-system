@@ -41,6 +41,9 @@ public class SecretStatsImpl implements SecretStats {
 		longestSecretLength = 0;
 		accessController.clear();
 		readCountSecret.clear();
+		trustedUser.clear();
+		worstKeeper.clear();
+		allSecrets.clear();
 		System.out.println("System Resest Done Successfully");
 	}
 
@@ -100,6 +103,7 @@ public class SecretStatsImpl implements SecretStats {
 		int maxReads = -1;
 		UUID secret = null;
 		for(Map.Entry<UUID, ArrayList> entry : readCountSecret.entrySet()) {
+			System.out.println("..");
 				if(entry.getValue().size()>maxReads){
 					maxReads = entry.getValue().size();
 					secret = entry.getKey();
@@ -114,7 +118,10 @@ public class SecretStatsImpl implements SecretStats {
 						
 				}
 		}
-
+		System.out.println(readCountSecret);
+		System.out.println(maxReads);
+		System.out.println(secret);
+		System.out.println(allSecrets.get(secret));
 		return allSecrets.get(secret);
 	}
 
@@ -125,7 +132,7 @@ public class SecretStatsImpl implements SecretStats {
 		}
 	}
 	
-	public void authorizeShareSecret(String userId, UUID secretId) {
+	public void authorizeShareSecret(String userId, UUID secretId) throws NotAuthorizedException {
 		if(accessController.get(secretId)!=null){
 			ArrayList allowedUser = accessController.get(secretId);
 				if(allowedUser.indexOf(userId) == -1){					//if user is in authorized user list,
@@ -136,8 +143,10 @@ public class SecretStatsImpl implements SecretStats {
 		}
 	}
 
-	public void authorizeReadSecret(String userId, UUID secretId) {
+	public void authorizeReadSecret(String userId, UUID secretId) throws NotAuthorizedException {
 		// TODO Auto-generated method stub
+		System.out.println("autho read Secret ftom "+ userId + secretId);
+		System.out.println("aaccess acontroler  "+ accessController.get(secretId));
 		if(accessController.get(secretId)!=null) {
 			ArrayList<String> allowedUser = accessController.get(secretId);
 			if(allowedUser.indexOf(userId) == -1){					//if user is in authorized user,
@@ -159,7 +168,7 @@ public class SecretStatsImpl implements SecretStats {
 						System.out.println("Unsharing is validated for"+targetId);	
 					}
 				}else{
-					throw new NotAuthorizedException(userId+" is not authorized to share the secret");
+					throw new NotAuthorizedException(userId+" is not authorized to unshare the secret");
 				}
 	}else{
 		throw new NotAuthorizedException("No such secret found");
@@ -219,6 +228,7 @@ public class SecretStatsImpl implements SecretStats {
 
 	public void readingSecret(String userId, UUID secretId) {
 		// TODO Auto-generated method stub
+		System.out.println("sssssssssssssssssssssssssssssssssssss"+ userId+ secretId);
 		if(readCountSecret.get(secretId)!=null){
 			if(readCountSecret.get(secretId).indexOf(userId)==-1) {
 				readCountSecret.get(secretId).add(userId);	

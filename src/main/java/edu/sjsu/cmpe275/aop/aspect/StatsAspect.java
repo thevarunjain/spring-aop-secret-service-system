@@ -37,27 +37,22 @@ public class StatsAspect {
 //		Map<UUID, ArrayList> accessController = new HashMap<UUID, ArrayList>();
 //		Map<UUID, ArrayList> readCountSecret = new HashMap<UUID, ArrayList>();
 	
-		String tempOwner = "";
-		String tempSecret = "";
-	
-		@After("execution(public java.util.UUID edu.sjsu.cmpe275.aop.SecretService.createSecret(..))")
-		public void sendLongestSecret(JoinPoint joinPoint) {
-			System.out.println("**Secret Creation**");
-			Object [] args = joinPoint.getArgs();
-			System.out.println("Secret "+args[1]+" has been successfully created by "+args[0]);
-			tempOwner = args[0].toString();
-			tempSecret= args[1].toString();
-			stats.generateLength((String)args[1]);			// message 
-		}
+		
 		
 		@AfterReturning(pointcut ="execution(public java.util.UUID edu.sjsu.cmpe275.aop.SecretService.createSecret(..))", returning ="retVal")
-		public void putTempOwner(UUID retVal){
+		public void putTempOwner(JoinPoint joinPoint, UUID retVal){
+			System.out.println("**Secret Creation**");
+			Object [] args = joinPoint.getArgs();
+			String tempOwner = args[0].toString();
+			String tempSecret= args[1].toString();
+			stats.generateLength((String)args[1]);			// message 
 			stats.creatingSecret(retVal,tempOwner, tempSecret);
 		}	
 	
 		
-		@After("execution(public void edu.sjsu.cmpe275.aop.SecretService.shareSecret(..))")
-		public void addingUserInAuthorizedList(JoinPoint joinPoint) {
+		@AfterReturning(pointcut = "execution(public void edu.sjsu.cmpe275.aop.SecretService.shareSecret(..))",  returning = "retVal")
+//		@After("execution(public void edu.sjsu.cmpe275.aop.SecretService.shareSecret(..))")
+		public void addingUserInAuthorizedList(JoinPoint joinPoint, Object retVal) {
 			System.out.println("**Secret Sharing**");
 			Object[] args = joinPoint.getArgs();
 			String userId= args[0].toString();
@@ -66,19 +61,22 @@ public class StatsAspect {
 			stats.sharingSecret(userId,secretId,targetId);
 		}
 		
-		
-		@After("execution(public * edu.sjsu.cmpe275.aop.SecretService.readSecret(..))")
-		public void validatingUserBeforeReading(JoinPoint joinPoint) {
+		@AfterReturning(pointcut = "execution(public * edu.sjsu.cmpe275.aop.SecretService.readSecret(..))",  returning = "retVal")
+//		@After("execution(public * edu.sjsu.cmpe275.aop.SecretService.readSecret(..))")
+		public void validatingUserBeforeReading(JoinPoint joinPoint, Object retVal) {
+//			public void validatingUserBeforeReading(JoinPoint joinPoint) {
 			System.out.println("**Secret Reading**");
 			Object[] args = joinPoint.getArgs();
 			String userId= args[0].toString();
 			UUID secretId= (UUID) args[1];
-//			String targetId = args[2].toString();
+			System.out.println("Calling reading secreted from before"+ userId + secretId);
 			stats.readingSecret(userId,secretId);
 		}
 		
-		@After("execution(public void edu.sjsu.cmpe275.aop.SecretService.unshareSecret(..))")
-		public void removingUserFromAuthorizedList(JoinPoint joinPoint) {
+		
+		@AfterReturning(pointcut = "execution(public void edu.sjsu.cmpe275.aop.SecretService.unshareSecret(..))", returning = "retVal")
+//		@After("execution(public void edu.sjsu.cmpe275.aop.SecretService.unshareSecret(..))")
+		public void removingUserFromAuthorizedList(JoinPoint joinPoint, Object retVal) {
 			System.out.println("**Secret Unsharing**");
 			Object[] args = joinPoint.getArgs();
 			

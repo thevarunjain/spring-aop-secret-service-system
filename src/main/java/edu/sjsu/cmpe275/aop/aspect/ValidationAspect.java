@@ -12,7 +12,7 @@ import org.springframework.aop.ThrowsAdvice;
 import org.springframework.core.annotation.Order;
 
 @Aspect
-@Order(4)
+@Order(1)
 public class ValidationAspect {
     /***
      * Following is a dummy implementation of this aspect.
@@ -20,25 +20,26 @@ public class ValidationAspect {
      */
 
 	@Before("execution(public * edu.sjsu.cmpe275.aop.SecretService.*(..))")
-	public void dummyAdvice(JoinPoint joinPoint) {
+	public void validation(JoinPoint joinPoint) {
 		System.out.printf("Validation for %s\n", joinPoint.getSignature().getName());
-	
 		Object[] args = joinPoint.getArgs();	
+		
 		if(joinPoint.getSignature().getName() == "createSecret") {
 			Object name = args[0];
-			Object secret = args[1];
-			
-			if(name.toString().length()==0) {
-				throw new IllegalArgumentException("Name not found");
-			}
+			Object secret = args[1];			
+
+				if(name == null || name.toString().length()<=0) {
+					throw new IllegalArgumentException("Name not found");
+				}
 			if(secret.toString().length()==0) {
 				throw new IllegalArgumentException("Secret not found");
 			}else if(secret.toString().length()>100){
 				throw new IllegalArgumentException("Secret too long");
 			}
-		}else {
+		}else{
 			for(Object w : args) {
-				if(w.toString().length() == 0) {
+			System.err.println("object >>>"+w);
+				if(w == null || w.toString().length() == 0) {
 					throw new IllegalArgumentException("One or more argument not passed in "+joinPoint.getSignature().getName());
 				}
 			}

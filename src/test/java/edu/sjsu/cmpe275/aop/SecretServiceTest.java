@@ -16,7 +16,6 @@
 //}
 package edu.sjsu.cmpe275.aop;
 
-import javafx.collections.transformation.SortedList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,13 +24,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -271,7 +268,7 @@ public class SecretServiceTest {
         secretService.shareSecret(USER_4, secret, USER_2);
 
         assertThat(
-               secretStats.getWorstSecretKeeper(),
+                secretStats.getWorstSecretKeeper(),
                 is(USER_2)
         );
     }
@@ -409,7 +406,7 @@ public class SecretServiceTest {
     }
 
     @Test
-    public void validationForIOException_ifLessThanTwoRetries_shouldExecuteProperly() throws IOException {
+    public void retryAspect_ifLessThanTwoRetries_shouldExecuteProperly() throws IOException {
         // createSecret specifically throws IOException for user3 2 times
         UUID secret = secretService.createSecret(USER_3, USER_3_SECRET);
         assertThat(
@@ -423,9 +420,180 @@ public class SecretServiceTest {
     }
 
     @Test(expected = IOException.class)
-    public void validationForIOException_ifMoreThanTwoRetries_throwsIOException() throws IOException {
+    public void retryAspect_ifMoreThanTwoRetries_throwsIOException() throws IOException {
         // createSecret specifically throws IOException for user4 3 times
         UUID secret = secretService.createSecret(USER_4, USER_4_SECRET);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void validationAspectCreateSecret_ifUserIsNull_throwsIllegalArgumentException() throws IOException {
+        //TODO discuss this case, added exception handling in RetryAspect
+        UUID secret = secretService.createSecret(null, USER_1_SECRET);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void validationAspectCreateSecret_ifSecretLengthMoreThanHundred_throwsIllegalArgumentException() throws IOException {
+        String longSecret = "ABCDEFGH1234567890IJKLMNOPQRST1234567890UVWXYZ123456789ABCDEFGHIJKLMNOP1234567890QRSTUV" +
+                "WXYZ123456789";
+        UUID secret = secretService.createSecret(USER_1, longSecret);
+        assertThat(
+                secretStats.getLengthOfLongestSecret(),
+                is(100)
+        );
+        longSecret = longSecret + "A";
+        secret = secretService.createSecret(USER_1, longSecret);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void validationAspectReadSecret_ifUserIsNull_throwsIllegalArgumentException() throws IOException {
+        secretService.readSecret(USER_2, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void raceConditionBetweenNotAuthorizedExceptionANDIllegalArgumentException() throws IOException {
+        UUID secret = secretService.createSecret(USER_1, USER_1_SECRET);
+        secretService.shareSecret(USER_2, secret, null);
+    }
+
+    @Test(expected = NotAuthorizedException.class)
+    public void accessControlAspect_ifInvalidSecretAndTriesToShare_throwsNotAuthorizedException() throws IOException {
+        UUID secret = secretService.createSecret(USER_1, USER_1_SECRET);
+        UUID invalidSecret = UUID.randomUUID();
+        secretService.shareSecret(USER_1, invalidSecret, USER_2);
+    }
+
+    @Test(expected = NotAuthorizedException.class)
+    public void accessControlAspect_ifSecretNotSharedWithAndTriesToRead_throwsNotAuthorizedException() throws IOException {
+        UUID secret = secretService.createSecret(USER_1, USER_1_SECRET);
+        secretService.readSecret(USER_2, secret);
+    }
+
+    @Test(expected = NotAuthorizedException.class)
+    public void accessControlAspect_ifNotOwnerOfSecretAndTriesToUnshare_throwsNotAuthorizedException() throws IOException {
+        UUID secret = secretService.createSecret(USER_1, USER_1_SECRET);
+        secretService.shareSecret(USER_1, secret, USER_2);
+        secretService.shareSecret(USER_2, secret, USER_3);
+        secretService.unshareSecret(USER_2, secret, USER_3);
+    }
+
+    @Test(expected = NotAuthorizedException.class)
+    public void test1() throws IOException {
+        UUID secret = secretService.createSecret("Alice", "My little secret");
+        secretService.readSecret("Bob", secret);
+    }
+
+    @Test
+    public void test2() throws IOException {
+        UUID secret = secretService.createSecret("Alice", "My little secret");
+        secretService.shareSecret("Alice", secret, "Bob");
+        secretService.readSecret("Bob", secret);
+    }
+
+    @Test
+    public void test3() throws IOException {
+        UUID secret = secretService.createSecret("Alice", "My little secret");
+        secretService.shareSecret("Alice", secret, "Bob");
+        secretService.shareSecret("Bob", secret, "Carl");
+        secretService.readSecret("Carl", secret);
+    }
+
+    @Test(expected = NotAuthorizedException.class)
+    public void test4() throws IOException {
+        UUID secret = secretService.createSecret("Alice", "My little secret");
+        secretService.shareSecret("Alice", secret, "Bob");
+        secretService.shareSecret("Bob", secret, "Carl");
+        secretService.unshareSecret("Alice", secret, "Carl");
+        secretService.readSecret("Carl", secret);
+    }
+
+    @Test
+    public void nirbhayKekre() throws IOException {
+        UUID s1 = secretService.createSecret("Alice", null);
+        UUID s2 = secretService.createSecret("Bob", "World");
+        secretService.shareSecret("Alice", s1, "Bob");
+        secretService.shareSecret("Bob", s2, "Alice");
+        secretService.readSecret("Alice", s2);
+        secretService.readSecret("Bob", s1);
+        assertThat(
+                secretStats.getBestKnownSecret(),
+                is("World")
+        );
+    }
+    
+    
+    
+    @Test
+    public void MostTrustedUserTest() throws IllegalArgumentException, IOException
+    {
+    	String u1 = "u1";
+    	String u2 = "u2";
+    	String u3 = "u3";
+    	String u4 = "u4";
+    	String u5 = "u5";
+    	String u6 = "u6";
+    	
+    	String s1 = "s1";
+    	String s2 = "s2";
+    	String s3 = "s3";
+    	String s4 = "s4";
+    	String s5 = "s5";
+    	String s6 = "s6";
+    	
+        UUID s1Id = secretService.createSecret("u1", "s1") ;
+        UUID s2Id = secretService.createSecret("u2", "s2") ;
+        UUID s3Id = secretService.createSecret("u3", "s3") ;
+        UUID s4Id = secretService.createSecret("u4", "s4") ;
+        UUID s5Id = secretService.createSecret("u5", "s5") ;
+        UUID s6Id = secretService.createSecret("u6", "s6") ;
+
+        secretService.shareSecret(u1, s1Id, u2);
+        secretService.shareSecret(u1, s1Id, u2);
+        
+        secretService.shareSecret(u3, s3Id, u1);
+        secretService.shareSecret(u1, s3Id, u2);
+        
+        secretService.shareSecret(u1, s1Id, u2);
+        
+        secretService.shareSecret(u2, s1Id, u2);
+        secretService.shareSecret(u2, s2Id, u2);
+        secretService.shareSecret(u2, s3Id, u2);
+        
+        secretService.shareSecret(u4, s4Id, u2);
+        
+        secretService.shareSecret(u1, s1Id, u3);
+        secretService.shareSecret(u2, s1Id, u3);
+        secretService.shareSecret(u4, s4Id, u3);
+        
+        secretService.shareSecret(u2, s2Id, u3);
+        secretService.shareSecret(u2, s2Id, u3);
+        secretService.shareSecret(u3, s3Id, u3);
+        secretService.shareSecret(u3, s4Id, u3);
+        
+        secretService.unshareSecret(u1, s1Id, u1);
+        secretService.unshareSecret(u1, s1Id, u2);
+        
+        secretService.readSecret(u1, s1Id);
+        secretService.readSecret(u2, s1Id);
+        secretService.readSecret(u3, s1Id);
+        secretService.readSecret(u2, s1Id);
+        
+        
+//        app.secretService.shareSecret(u1, s1Id, u2);
+//        app.secretService.shareSecret(u1, s1Id, u3);
+//        app.secretService.shareSecret(u1, s1Id, u4);
+//        app.secretService.shareSecret(u1, s1Id, u5);
+//        app.secretService.shareSecret(u1, s1Id, u6);
+        
+//        app.secretService.unshareSecret(u1, s1Id, u5);
+        
+//        app.secretService.shareSecret(u2, s1Id, u1);
+//        app.secretService.shareSecret(u3, s1Id, u1);
+//        app.secretService.shareSecret(u4, s1Id, u1);
+//        app.secretService.shareSecret(u5, s1Id, u1);
+        
+        assertEquals(u3, secretStats.getMostTrustedUser());
+        assertEquals(s1, secretStats.getBestKnownSecret());
+        assertEquals(u1, secretStats.getWorstSecretKeeper());
+        assertEquals(2, secretStats.getLengthOfLongestSecret());
+    }
 }

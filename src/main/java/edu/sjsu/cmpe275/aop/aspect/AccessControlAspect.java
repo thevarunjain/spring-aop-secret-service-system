@@ -34,7 +34,7 @@ public class AccessControlAspect {
 	
 		
 		@Before("execution(public void edu.sjsu.cmpe275.aop.SecretService.shareSecret(..))")
-		public void checkAuthorizedUserBeforeSharing(JoinPoint joinPoint) {
+		public void checkAuthorizedUserBeforeSharing  (JoinPoint joinPoint) {
 			System.out.printf("Access control for -> %s\n", joinPoint.getSignature().getName());
 			Object[] args = joinPoint.getArgs();
 			String userId= args[0].toString();
@@ -50,7 +50,7 @@ public class AccessControlAspect {
 			Object[] args = joinPoint.getArgs();
 			String userId= args[0].toString();
 			UUID secretId= (UUID) args[1];
-			
+			System.out.println("Calling authorize secrte from before"+ userId + secretId);
 			stats.authorizeReadSecret(userId, secretId);	
 		}
 		
