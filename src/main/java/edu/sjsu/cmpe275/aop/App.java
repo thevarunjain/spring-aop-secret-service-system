@@ -1,5 +1,7 @@
 package edu.sjsu.cmpe275.aop;
 
+//import static org.junit.Assert.assertEquals;
+
 import java.util.UUID;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -13,63 +15,36 @@ public class App {
     
     	ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("context.xml");
         SecretService secretService = (SecretService) ctx.getBean("secretService");
-        SecretStats stats = (SecretStats) ctx.getBean("secretStats");
-
-        final String USER_1 = "user1";
-
-        final String USER_2 = "user2";
-
-        final String USER_3 = "user3";
-
-        final String USER_4 = "user4";
-
-        final String USER_1_SECRET = "user1secret";
-
-        final String USER_2_SECRET = "user2secret";
-
-        final String USER_3_SECRET = "user3secret";
-
-        final String USER_4_SECRET = "user4secret";
-        
-  
-        
-      
+        SecretStats stats = (SecretStats) ctx.getBean("secretStats");      
         
         try {
-//        	UUID secret = secretService.createSecret("Alice", "My little secret");
-//        	UUID secret2 = secretService.createSecret("Alice", "My little secret is not so little ");
-//        	UUID secret3 = secretService.createSecret("Alice", "My little secret is not so little that you can call it little");
-//        	UUID secret4 = secretService.createSecret("Carl", "My little secret is not so little that you can call it little");
-//        	secretService.shareSecret("Alice", secret, "Bob");
-//        	secretService.shareSecret("Alice", secret2, "Bob");
-//        	secretService.shareSecret("Alice", secret3, "Bob");
-//        	secretService.shareSecret("Alice", secret, "Carl");
-//        	secretService.shareSecret("Alice", secret2, "Carl");
-//        	secretService.shareSecret("Alice", secret3, "Carl");
-//        	secretService.shareSecret("Alice", secret3, "Alice");
-//        	secretService.shareSecret("Alice", secret, "Den");
-//        	secretService.shareSecret("Bob", secret, "Ed");
-//        	secretService.shareSecret("Bob", secret2, "Ed");
-//        	secretService.shareSecret("Bob", secret3, "Ed");
-//        	secretService.shareSecret("Carl", secret4, "Ed");
-//        	secretService.shareSecret("Carl", secret4, "Alice");
-//        	secretService.shareSecret("Carl", secret4, "Bob");
-//        	secretService.shareSecret("Carl", secret4, "Den");
-//        	secretService.readSecret("Alice", secret);
-//        	secretService.readSecret("Bob", secret);
-//        	secretService.readSecret("Bob", secret);
-//        	secretService.readSecret("Bob", secret);
-//        	secretService.readSecret("Carl", secret);
-//        	secretService.readSecret("Carl", secret);
-            UUID s1 = secretService.createSecret("Alice", null);
-            UUID s2 = secretService.createSecret("Bob", "World");
-            secretService.shareSecret("Alice", s1, "Bob");
-            secretService.shareSecret("Bob", s2, "Alice");
-            secretService.readSecret("Alice", s2);
-            secretService.readSecret("Bob", s1);
 
-            
-     
+        	UUID secret = secretService.createSecret("Alice", "My little secret");
+        	UUID secret2 = secretService.createSecret("Alice", "My little secret is not so little ");
+        	UUID secret3 = secretService.createSecret("Alice", "My little secret is not so little that you can call it little");
+        	UUID secret4 = secretService.createSecret("Carl", "My little secret is not so little that you can call it little");
+        	secretService.shareSecret("Alice", secret, "Bob");
+        	secretService.shareSecret("Alice", secret2, "Bob");
+        	secretService.shareSecret("Alice", secret3, "Bob");
+        	secretService.shareSecret("Alice", secret, "Carl");
+        	secretService.shareSecret("Alice", secret2, "Carl");
+        	secretService.shareSecret("Alice", secret3, "Carl");
+        	secretService.shareSecret("Alice", secret3, "Alice");
+        	secretService.shareSecret("Alice", secret, "Den");
+        	secretService.shareSecret("Bob", secret, "Ed");
+        	secretService.shareSecret("Bob", secret2, "Ed");
+        	secretService.shareSecret("Bob", secret3, "Ed");
+        	secretService.shareSecret("Carl", secret4, "Ed");
+        	secretService.shareSecret("Carl", secret4, "Alice");
+        	secretService.shareSecret("Carl", secret4, "Bob");
+        	secretService.shareSecret("Carl", secret4, "Den");
+        	secretService.readSecret("Alice", secret);
+        	secretService.readSecret("Bob", secret);
+        	secretService.readSecret("Bob", secret);
+        	secretService.readSecret("Bob", secret);
+        	secretService.readSecret("Carl", secret);
+        	secretService.readSecret("Carl", secret);
+
         	
         } catch (Exception e) {
             e.printStackTrace();

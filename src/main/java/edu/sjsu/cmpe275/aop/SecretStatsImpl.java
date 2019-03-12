@@ -22,7 +22,7 @@ public class SecretStatsImpl implements SecretStats {
      * Following is a dummy implementation.
      * You are expected to provide an actual implementation based on the requirements.
      */
-//	@Autowired SecretServiceImpl service;
+
 	
 	       Map<UUID, ArrayList> accessController = new HashMap<UUID, ArrayList>();
 		   Map<UUID, ArrayList> readCountSecret = new HashMap<UUID, ArrayList>();
@@ -33,11 +33,9 @@ public class SecretStatsImpl implements SecretStats {
 	
 	int longestSecretLength = 0;	
 	
-//	@Override
+@Override
 	public void resetStatsAndSystem() {
 		// TODO Auto-generated method stub
-		System.out.println(trustedUser);
-		System.out.println(worstKeeper);
 		longestSecretLength = 0;
 		accessController.clear();
 		readCountSecret.clear();
@@ -47,12 +45,12 @@ public class SecretStatsImpl implements SecretStats {
 		System.out.println("System Resest Done Successfully");
 	}
 
-//	@Override
+@Override
 	public int getLengthOfLongestSecret() {
 		return longestSecretLength;
 	}
 
-//	@Override
+@Override
 	public String getMostTrustedUser() {
 		// TODO Auto-generated method stub
 		int maxShared = -1;
@@ -72,7 +70,7 @@ public class SecretStatsImpl implements SecretStats {
 		return userID;
 	}
 
-//	@Override
+@Override
 	public String getWorstSecretKeeper() {
 		int minShared = Integer.MAX_VALUE;
 		String userId =null;
@@ -97,7 +95,7 @@ public class SecretStatsImpl implements SecretStats {
 		return userId;
 	}
 
-//	@Override
+@Override
 	public String getBestKnownSecret() {
 		// TODO Auto-generated method stub
 		int maxReads = -1;
@@ -113,10 +111,6 @@ public class SecretStatsImpl implements SecretStats {
 						
 				}
 		}
-		System.out.println(readCountSecret);
-		System.out.println(maxReads);
-		System.out.println(secret);
-		System.out.println(allSecrets.get(secret));
 		return allSecrets.get(secret);
 	}
 
@@ -134,8 +128,8 @@ public class SecretStatsImpl implements SecretStats {
 	
 	public void authorizeShareSecret(String userId, UUID secretId) throws NotAuthorizedException {
 		if(accessController.get(secretId)!=null){
-			ArrayList allowedUser = accessController.get(secretId);
-				if(allowedUser.indexOf(userId) == -1){					//if user is in authorized user list,
+//			ArrayList allowedUser = accessController.get(secretId);
+				if(accessController.get(secretId).indexOf(userId) == -1){					//if user is in authorized user list,
 					throw new NotAuthorizedException(userId+"is not authorized to share the secret");
 				}
 		}else {
@@ -145,11 +139,8 @@ public class SecretStatsImpl implements SecretStats {
 
 	public void authorizeReadSecret(String userId, UUID secretId) throws NotAuthorizedException {
 		// TODO Auto-generated method stub
-		System.out.println("autho read Secret ftom "+ userId + secretId);
-		System.out.println("aaccess acontroler  "+ accessController.get(secretId));
 		if(accessController.get(secretId)!=null) {
-			ArrayList<String> allowedUser = accessController.get(secretId);
-			if(allowedUser.indexOf(userId) == -1){					//if user is in authorized user,
+			if(accessController.get(secretId).indexOf(userId) == -1){					//if user is in authorized user,
 				throw new NotAuthorizedException(userId+" is not authorized to access the secret");
 			}
 		}else {
@@ -160,12 +151,11 @@ public class SecretStatsImpl implements SecretStats {
 	public void authorizeUnshareSecret(String userId, UUID secretId, String targetId) {
 		// TODO Auto-generated method stub
 		if(accessController.get(secretId) != null){
-			ArrayList<String> allowedUser = accessController.get(secretId);
-				if(allowedUser.get(0) == userId){					//if user is in authorized user,
-					if(allowedUser.indexOf(targetId)==-1) {
+				if(accessController.get(secretId).get(0) == userId){					//if user is in authorized user,
+					if(accessController.get(secretId).indexOf(targetId)==-1) {
 						throw new NotAuthorizedException("Secret not shared with "+targetId+", cannot delete "+targetId);
 					}else {
-						System.out.println("Unsharing is validated for"+targetId);	
+						System.out.println("Unsharing is validated for "+targetId);	
 					}
 				}else{
 					throw new NotAuthorizedException(userId+" is not authorized to unshare the secret");
@@ -182,14 +172,16 @@ public class SecretStatsImpl implements SecretStats {
 		authorizedUser.add(tempOwner);
 		accessController.put(retVal, authorizedUser);
 		allSecrets.put(retVal,tempSecret);
+		System.out.println("Secret " +retVal +" has been shared by "+ tempOwner);
 	}
 	
 	public void sharingSecret(String userId, UUID secretId, String targetId) {
 //		if(accessController.get(secretId).indexOf(targetId)==-1) {
 		//Adding targetId to access controller
-			accessController.get(secretId).add(targetId);
+		if(accessController.get(secretId).indexOf(targetId)==-1) {
+				accessController.get(secretId).add(targetId);
 			System.out.println("Secret has been shared with "+targetId);
-	
+		}
 			// Trusted User Implementation
 				String trustedSignature = userId + secretId.toString();
 				if(userId != targetId) {
@@ -201,9 +193,8 @@ public class SecretStatsImpl implements SecretStats {
 						trustedUser.put(targetId, hash);
 					}
 				}else {
-					System.err.println(userId+" shared secret to own "+ targetId);
+					System.out.println(userId+" shared secret to own "+ targetId);
 				}
-				System.err.println(trustedUser);
 				
 			//Worst Secret Keeper
 				String worstSignature = targetId + secretId.toString();
@@ -216,14 +207,8 @@ public class SecretStatsImpl implements SecretStats {
 						worstKeeper.put(userId, hash);
 					}
 				}else {
-					System.err.println(userId+" shared secret to own "+ targetId);
+					System.out.println(userId+" shared secret to own "+ targetId);
 				}
-				
-			
-//		}else {
-//			System.err.println("Secret is already shared with "+targetId);
-//		}
-		System.out.println(accessController);
 	}
 
 	public void readingSecret(String userId, UUID secretId) {
@@ -238,26 +223,16 @@ public class SecretStatsImpl implements SecretStats {
 			readerList.add(userId);
 			readCountSecret.put(secretId,readerList);
 		}
-		System.out.println("Read Map.."+readCountSecret);
+	
 	}
 
 	public void unsharingSecret(UUID secretId, String targetId) {
 		// TODO Auto-generated method stub
-		ArrayList<String> allowedUser = accessController.get(secretId);
-		if(allowedUser.get(0) != targetId){
-				allowedUser.remove(targetId);
+		if(accessController.get(secretId).get(0) != targetId){
+			accessController.get(secretId).remove(targetId);
 				System.out.println("Secret has been unshared with "+targetId);
 		}else {
 			System.err.println("Creater has tried to delete itself, handled silently");
 		}
-	}
-
-	
-	
-	
-	
-    
+	}   
 }
-
-
-

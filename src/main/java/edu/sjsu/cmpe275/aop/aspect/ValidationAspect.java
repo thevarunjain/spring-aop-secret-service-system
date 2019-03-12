@@ -21,7 +21,7 @@ public class ValidationAspect {
 
 	@Before("execution(public * edu.sjsu.cmpe275.aop.SecretService.*(..))")
 	public void validation(JoinPoint joinPoint) {
-		System.out.printf("Validation for %s\n", joinPoint.getSignature().getName());
+		System.out.printf("1. Validation for %s\n", joinPoint.getSignature().getName());
 		Object[] args = joinPoint.getArgs();	
 		
 		if(joinPoint.getSignature().getName().equals("createSecret") ) {

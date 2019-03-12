@@ -17,11 +17,11 @@ public class RetryAspect {
 	int count = 0;
 	@Around("execution(public void edu.sjsu.cmpe275.aop.SecretService.createSecret(..))")
 	public void dummyAdvice(ProceedingJoinPoint joinPoint) {
-		System.out.printf("Retry aspect prior to the executuion of the metohd %s\n", joinPoint.getSignature().getName());
+		System.out.printf("Retry aspect prior to the executution of %s\n", joinPoint.getSignature().getName());
 		Object result = null;
 		try {
 			result = joinPoint.proceed();
-			System.out.printf("Finished the executuion of the metohd %s with result %s\n", joinPoint.getSignature().getName(), result);
+			System.out.printf("Finished the executuion of the method %s with result %s\n", joinPoint.getSignature().getName(), result);
 		} catch (Throwable e) {
 			if(e instanceof IOException && count < 3){
 				count++;
@@ -29,7 +29,7 @@ public class RetryAspect {
 			}else{
 				count = 0;
 				e.printStackTrace();
-				System.out.printf("Aborted the executuion of the metohd %s\n", joinPoint.getSignature().getName());
+				System.out.printf("Aborted the executution of  %s\n", joinPoint.getSignature().getName());
 			}
 		}
 	}

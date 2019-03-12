@@ -1,4 +1,4 @@
-//package edu.sjsu.cmpe275.aop;
+package edu.sjsu.cmpe275.aop;
 //
 //import org.junit.Test;
 //
@@ -14,7 +14,7 @@
 //    @Test
 //    public void testCaseN() { }
 //}
-package edu.sjsu.cmpe275.aop;
+//package edu.sjsu.cmpe275.aop;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -521,79 +521,5 @@ public class SecretServiceTest {
     }
     
     
-    
-    @Test
-    public void MostTrustedUserTest() throws IllegalArgumentException, IOException
-    {
-    	String u1 = "u1";
-    	String u2 = "u2";
-    	String u3 = "u3";
-    	String u4 = "u4";
-    	String u5 = "u5";
-    	String u6 = "u6";
-    	
-    	String s1 = "s1";
-    	String s2 = "s2";
-    	String s3 = "s3";
-    	String s4 = "s4";
-    	String s5 = "s5";
-    	String s6 = "s6";
-    	
-        UUID s1Id = secretService.createSecret("u1", "s1") ;
-        UUID s2Id = secretService.createSecret("u2", "s2") ;
-        UUID s3Id = secretService.createSecret("u3", "s3") ;
-        UUID s4Id = secretService.createSecret("u4", "s4") ;
-        UUID s5Id = secretService.createSecret("u5", "s5") ;
-        UUID s6Id = secretService.createSecret("u6", "s6") ;
-
-        secretService.shareSecret(u1, s1Id, u2);
-        secretService.shareSecret(u1, s1Id, u2);
-        
-        secretService.shareSecret(u3, s3Id, u1);
-        secretService.shareSecret(u1, s3Id, u2);
-        
-        secretService.shareSecret(u1, s1Id, u2);
-        
-        secretService.shareSecret(u2, s1Id, u2);
-        secretService.shareSecret(u2, s2Id, u2);
-        secretService.shareSecret(u2, s3Id, u2);
-        
-        secretService.shareSecret(u4, s4Id, u2);
-        
-        secretService.shareSecret(u1, s1Id, u3);
-        secretService.shareSecret(u2, s1Id, u3);
-        secretService.shareSecret(u4, s4Id, u3);
-        
-        secretService.shareSecret(u2, s2Id, u3);
-        secretService.shareSecret(u2, s2Id, u3);
-        secretService.shareSecret(u3, s3Id, u3);
-        secretService.shareSecret(u3, s4Id, u3);
-        
-        secretService.unshareSecret(u1, s1Id, u1);
-        secretService.unshareSecret(u1, s1Id, u2);
-        
-        secretService.readSecret(u1, s1Id);
-        secretService.readSecret(u2, s1Id);
-        secretService.readSecret(u3, s1Id);
-        secretService.readSecret(u2, s1Id);
-        
-        
-//        app.secretService.shareSecret(u1, s1Id, u2);
-//        app.secretService.shareSecret(u1, s1Id, u3);
-//        app.secretService.shareSecret(u1, s1Id, u4);
-//        app.secretService.shareSecret(u1, s1Id, u5);
-//        app.secretService.shareSecret(u1, s1Id, u6);
-        
-//        app.secretService.unshareSecret(u1, s1Id, u5);
-        
-//        app.secretService.shareSecret(u2, s1Id, u1);
-//        app.secretService.shareSecret(u3, s1Id, u1);
-//        app.secretService.shareSecret(u4, s1Id, u1);
-//        app.secretService.shareSecret(u5, s1Id, u1);
-        
-        assertEquals(u3, secretStats.getMostTrustedUser());
-        assertEquals(s1, secretStats.getBestKnownSecret());
-        assertEquals(u1, secretStats.getWorstSecretKeeper());
-        assertEquals(2, secretStats.getLengthOfLongestSecret());
-    }
+  
 }
