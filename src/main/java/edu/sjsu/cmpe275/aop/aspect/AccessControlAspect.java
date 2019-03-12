@@ -42,7 +42,7 @@ public class AccessControlAspect {
 			stats.authorizeShareSecret(userId, secretId);
 		}
 		
-		
+		 
 		@Before("execution(public * edu.sjsu.cmpe275.aop.SecretService.readSecret(..))")
 		public void validatingUserBeforeReading(JoinPoint joinPoint) {
 			System.out.printf("2. Access control for -> %s\n", joinPoint.getSignature().getName());

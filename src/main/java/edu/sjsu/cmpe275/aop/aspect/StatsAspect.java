@@ -26,7 +26,7 @@ import edu.sjsu.cmpe275.aop.SecretStatsImpl;
 import edu.sjsu.cmpe275.aop.aspect.AccessControlAspect;;
 
 @Aspect
-@Order(0)
+@Order(3)
 public class StatsAspect {
     /***
      * Following is a dummy implementation of this aspect.
@@ -40,7 +40,7 @@ public class StatsAspect {
 		
 		
 		@AfterReturning(pointcut ="execution(public java.util.UUID edu.sjsu.cmpe275.aop.SecretService.createSecret(..))", returning ="retVal")
-		public void putTempOwner(JoinPoint joinPoint, UUID retVal){
+		public Object putTempOwner(JoinPoint joinPoint, UUID retVal){
 			System.out.println("**Secret Creation**");
 			Object [] args = joinPoint.getArgs();
 			String tempOwner = args[0].toString();
@@ -50,6 +50,8 @@ public class StatsAspect {
 			}
 			stats.generateLength((String)args[1]);			// message 
 			stats.creatingSecret(retVal,tempOwner, tempSecret);
+			
+			return retVal;
 		}	
 	
 		

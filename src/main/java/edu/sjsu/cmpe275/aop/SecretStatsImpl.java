@@ -56,6 +56,7 @@ public class SecretStatsImpl implements SecretStats {
 		int maxShared = -1;
 		String userID = null;
 		for(Map.Entry<String, HashSet> entry : trustedUser.entrySet()) {
+			System.out.println(entry.getValue().size()+"ssssssssssssssssssssssssssssssssssssssss"+entry.getKey());
 				if(entry.getValue().size()>maxShared) {
 					maxShared = entry.getValue().size();
 					userID = entry.getKey();
@@ -67,6 +68,9 @@ public class SecretStatsImpl implements SecretStats {
 					}
 				}
 		}
+		
+		System.err.println(trustedUser);
+		System.err.println(accessController);
 		return userID;
 	}
 
@@ -184,6 +188,9 @@ public class SecretStatsImpl implements SecretStats {
 		}
 			// Trusted User Implementation
 				String trustedSignature = userId + secretId.toString();
+				System.err.println(userId);
+				System.err.println(targetId);
+				System.err.println(trustedSignature);
 				if(userId != targetId) {
 					if(trustedUser.get(targetId)!=null) {
 						trustedUser.get(targetId).add(trustedSignature);
@@ -195,7 +202,8 @@ public class SecretStatsImpl implements SecretStats {
 				}else {
 					System.out.println(userId+" shared secret to own "+ targetId);
 				}
-				
+				System.err.println(trustedUser);
+
 			//Worst Secret Keeper
 				String worstSignature = targetId + secretId.toString();
 				if(userId != targetId) {
